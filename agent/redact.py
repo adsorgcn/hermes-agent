@@ -825,10 +825,10 @@ _FORM_BODY_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_.-]*=[^&\s]*(?:&[A-Za-z_][A-Za
 # ``ghp_abc\n123``) and escape the contiguous prefix regexes.
 _CONTROL_CHARS_RE = re.compile(r"[\x00-\x1f\x7f\u200b-\u200f\u2028-\u202f\u2060\ufeff]")
 
-# Union of every _PREFIX_PATTERNS body class: a control-stripped match may only
-# span token-body or control chars. ``=`` is excluded so a KEY=value separator
-# never lets a match span unrelated text.
-_TOKEN_BODY_CHARS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.")
+# Union of every _PREFIX_PATTERNS body class (incl. the ``/`` of Google's ``1//0``):
+# a control-stripped match may only span token-body or control chars. ``=`` is
+# excluded so a KEY=value separator never lets a match span unrelated text.
+_TOKEN_BODY_CHARS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-./")
 
 
 def _compile_prefix_matcher(patterns: list) -> re.Pattern[str]:
@@ -871,7 +871,7 @@ def _mask_prefix_match(m: "re.Match[str]", mask) -> str:
     glued = m.start() > 0 and m.string[m.start() - 1] in "-_"
     token = m.group(1)
     # Google OAuth prefixes are distinctive even when base64url separators break every long run.
-    if glued and not token.startswith(("GOCSPX-", "ya29.")) and not _is_opaque_prefixed_token(token):
+    if glued and not token.startswith(("GOCSPX-", "ya29.", "1//0")) and not _is_opaque_prefixed_token(token):
         return m.group(0)
     return mask(token)
 
