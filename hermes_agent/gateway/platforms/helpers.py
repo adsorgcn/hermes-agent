@@ -17,7 +17,7 @@ import unicodedata
 from pathlib import Path
 from typing import Any, Iterator, MutableMapping, Optional
 from hermes_agent.gateway.platforms.event import MessageEvent
-from utils import atomic_json_write
+from hermes_agent.utils import atomic_json_write
 
 logger = logging.getLogger(__name__)
 
@@ -339,7 +339,7 @@ class ThreadParticipationTracker:
         self._threads: dict[str, None] = dict.fromkeys(str(t) for t in self._load())
 
     def _state_path(self) -> Path:
-        from hermes_constants import get_hermes_home
+        from hermes_agent.hermes_constants import get_hermes_home
         return get_hermes_home() / f"{self._platform}_threads.json"
 
     def _load(self) -> list[str]:
@@ -499,7 +499,7 @@ def convert_table_to_bullets(text: str) -> str:
 
 def voice_mention_gate_enabled(extra: Optional[dict]) -> bool:
     """``voice_mention_patterns``: opt-in, because it sends unaddressed members' voice notes to STT."""
-    from utils import is_truthy_value
+    from hermes_agent.utils import is_truthy_value
     return is_truthy_value((extra or {}).get("voice_mention_patterns"), default=False)
 
 
