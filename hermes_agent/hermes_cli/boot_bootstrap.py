@@ -85,7 +85,7 @@ def _git_binary() -> str | None:
 def current_install_identity(project_root: Path) -> str | None:
     """What code this install is: stamp commit for sealed trees, git HEAD
     for checkouts, None for broken trees (never bootstrap, never write)."""
-    from hermes_cli.steward import read_install_stamp
+    from hermes_agent.hermes_cli.steward import read_install_stamp
 
     root = Path(project_root)
     if (root / ".git").exists():
@@ -106,7 +106,7 @@ def current_install_identity(project_root: Path) -> str | None:
 
 def record_path(project_root: Path) -> Path:
     """Each profile completes its own home maintenance for this installation."""
-    from hermes_cli.profiles import get_active_profile_name
+    from hermes_agent.hermes_cli.profiles import get_active_profile_name
 
     name = get_active_profile_name() or "default"
     return install_state_dir(project_root) / "bootstrap" / f"{name}.json"
@@ -226,7 +226,7 @@ class _RecordLock:
 
 def run_boot_bootstrap(project_root: Path) -> dict:
     """Bound home maintenance to one attempt per installed revision."""
-    from hermes_cli import post_update
+    from hermes_agent.hermes_cli import post_update
 
     identity = current_install_identity(project_root)
     if not identity:
@@ -254,7 +254,7 @@ def _retry_owed_migration(record: Path, identity: str, known: dict):
     """This revision's maintenance is done, but its config migration stopped at a failing step
     (``failed_step`` in the record): rerun that one step on every start until it succeeds. It
     warns once per start; the other steps stay bounded to one attempt per revision."""
-    from hermes_cli import post_update
+    from hermes_agent.hermes_cli import post_update
 
     if owed_config_migration(known) is None:
         return "skipped"
