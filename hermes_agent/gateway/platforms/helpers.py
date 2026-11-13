@@ -550,7 +550,7 @@ async def spoken_mention_clips(paths: list[str], patterns, *, adapter: Any = Non
     results: dict = {}
     try:
         async with _gate_stt_scope(adapter, source):
-            from tools.transcription_tools import is_stt_enabled
+            from hermes_agent.tools.transcription_tools import is_stt_enabled
             enabled = stt_enabled_for_turn(getattr(adapter, "gateway_runner", None)) \
                 and _sender_may_use_bot(adapter, source) and await asyncio.to_thread(is_stt_enabled)
             for path in paths if enabled else ():
@@ -1022,13 +1022,13 @@ def is_discord_channel_obfuscated(channel) -> bool:
 
 def platform_http_client(**kwargs: Any) -> Any:
     """``httpx.AsyncClient`` for a platform adapter: connect-time SSRF validation
-    (``tools.url_safety.create_ssrf_safe_async_client``), every redirect hop re-checked
+    (``hermes_agent.tools.url_safety.create_ssrf_safe_async_client``), every redirect hop re-checked
     (``gateway.platforms.base.ssrf_redirect_guard``, run before any caller ``response`` hooks) and the
     shared keepalive pool limits (``platform_httpx_limits()``; pass ``limits=None`` for httpx's
     defaults). Defaults ``timeout=30.0`` and ``follow_redirects=True``; other kwargs go to httpx."""
     from hermes_agent.gateway.platforms._http_client_limits import platform_httpx_limits
     from hermes_agent.gateway.platforms.base import ssrf_redirect_guard
-    from tools.url_safety import create_ssrf_safe_async_client
+    from hermes_agent.tools.url_safety import create_ssrf_safe_async_client
     hooks = dict(kwargs.pop("event_hooks", None) or {})
     hooks["response"] = [ssrf_redirect_guard, *hooks.get("response", ())]
     kwargs.setdefault("timeout", 30.0)

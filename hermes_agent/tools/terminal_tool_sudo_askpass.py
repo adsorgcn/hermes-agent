@@ -16,7 +16,7 @@ import re
 import shlex
 import subprocess
 
-logger = logging.getLogger("tools.terminal_tool")
+logger = logging.getLogger("hermes_agent.tools.terminal_tool")
 
 # Placeholder for the watchdog's ``read -t`` seconds. ``_prepare_command`` cannot know the
 # command's timeout, so ``BaseEnvironment.execute`` fills it via ``fill_timeout_token``.
@@ -191,7 +191,7 @@ def has_own_stdin_or_askpass(command: str | None) -> bool:
     (``-u S``, ``-pS``). Such a command keeps the stdin form, since sudo rejects ``-A`` with
     ``-S``.
     """
-    from tools.terminal_tool_sudo import _rewrite_real_sudo_invocations, _scan_shell
+    from hermes_agent.tools.terminal_tool_sudo import _rewrite_real_sudo_invocations, _scan_shell
 
     if not command:
         return False
@@ -225,7 +225,7 @@ def has_background_sudo(command: str | None) -> bool:
     them. It errs toward True: a miss would stop serving a backgrounded sudo that the stdin
     form still feeds.
     """
-    from tools.terminal_tool_sudo import _rewrite_real_sudo_invocations, _scan_shell
+    from hermes_agent.tools.terminal_tool_sudo import _rewrite_real_sudo_invocations, _scan_shell
 
     if not command:
         return False
